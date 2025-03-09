@@ -18,6 +18,10 @@ float delta = 0.005f;
 float max_offset = 0.7f;
 float curr_angle = 0.0f;
 float angle_delta = 0.5f;
+float curr_size = 0.4f;
+float max_size = 0.8f;
+float min_size = 0.1f;
+float size_delta = 0.01f;
 bool direction = true;
 
 static const char* VERTEX_SHADER = "            \n\
@@ -28,7 +32,7 @@ layout(location = 0) in vec3 pos;               \n\
 uniform mat4 model;                            \n\
 void main()                                     \n\
 {                                               \n\
-    gl_Position = model * vec4(0.4*pos.x, 0.4*pos.y, pos.z, 1.0);               \n\
+    gl_Position = model * vec4(pos, 1.0);               \n\
 }                                               \n\
 ";
 
@@ -188,8 +192,10 @@ int main()
 
         if(direction) {
             x_offset += delta;
+            curr_size += size_delta;
         } else {
             x_offset -= delta;
+            curr_size -= size_delta;
         }
 
         if(abs(x_offset) >= max_offset) {
@@ -210,6 +216,7 @@ int main()
         glm::mat4 model(1.0f);
         model = glm::translate(model, glm::vec3(x_offset, 0.0f, 0.0f));
         model = glm::rotate(model, curr_angle * TO_RADIANS, glm::vec3(0.0f, 0.0f, 1.0f));
+        model = glm::scale(model, glm::vec3(curr_size, 0.4f, 1.0f));
         glUniformMatrix4fv(uniform_model, 1, GL_FALSE, glm::value_ptr(model));
 
         glBindVertexArray(vao);
