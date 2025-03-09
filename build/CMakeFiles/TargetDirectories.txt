@@ -1,0 +1,5 @@
+/Users/sohamkanji/Documents/opengl-course/build/CMakeFiles/edit_cache.dir
+/Users/sohamkanji/Documents/opengl-course/build/CMakeFiles/rebuild_cache.dir
+/Users/sohamkanji/Documents/opengl-course/build/app/CMakeFiles/OpenGLProject.dir
+/Users/sohamkanji/Documents/opengl-course/build/app/CMakeFiles/edit_cache.dir
+/Users/sohamkanji/Documents/opengl-course/build/app/CMakeFiles/rebuild_cache.dir
