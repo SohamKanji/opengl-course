@@ -9,12 +9,15 @@
 // Window Dimensions
 const GLint WIDTH = 800;
 const GLint HEIGHT = 600;
+const static float TO_RADIANS = 3.14159265f / 180.0f;
 
 GLuint vao, vbo, shader, uniform_model;
 
 float x_offset = 0.0f;
 float delta = 0.005f;
 float max_offset = 0.7f;
+float curr_angle = 0.0f;
+float angle_delta = 0.5f;
 bool direction = true;
 
 static const char* VERTEX_SHADER = "            \n\
@@ -25,7 +28,7 @@ layout(location = 0) in vec3 pos;               \n\
 uniform mat4 model;                            \n\
 void main()                                     \n\
 {                                               \n\
-    gl_Position = model * vec4(pos.x, pos.y, pos.z, 1.0);               \n\
+    gl_Position = model * vec4(0.4*pos.x, 0.4*pos.y, pos.z, 1.0);               \n\
 }                                               \n\
 ";
 
@@ -193,6 +196,11 @@ int main()
             direction = !direction;
         }
 
+        curr_angle += angle_delta;
+        if(curr_angle >= 360.0f) {
+            curr_angle -= 360.0f;
+        }
+
         // Clear window
         glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT);
@@ -201,6 +209,7 @@ int main()
 
         glm::mat4 model(1.0f);
         model = glm::translate(model, glm::vec3(x_offset, 0.0f, 0.0f));
+        model = glm::rotate(model, curr_angle * TO_RADIANS, glm::vec3(0.0f, 0.0f, 1.0f));
         glUniformMatrix4fv(uniform_model, 1, GL_FALSE, glm::value_ptr(model));
 
         glBindVertexArray(vao);
