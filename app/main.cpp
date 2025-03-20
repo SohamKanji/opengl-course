@@ -24,28 +24,34 @@ float min_size = 0.1f;
 float size_delta = 0.01f;
 bool direction = true;
 
-static const char* VERTEX_SHADER = "            \n\
-#version 330                                    \n\
-                                                \n\
-layout(location = 0) in vec3 pos;               \n\
-                                                \n\
-uniform mat4 model;                            \n\
-void main()                                     \n\
-{                                               \n\
-    gl_Position = model * vec4(pos, 1.0);               \n\
-}                                               \n\
-";
+static const char* VERTEX_SHADER = R"(
+#version 330
 
-static const char* FRAGMENT_SHADER = "          \n\
-#version 330                                    \n\
-                                                \n\
-out vec4 color;                                 \n\
-                                                \n\
-void main()                                     \n\
-{                                               \n\
-    color = vec4(1.0, 0.0, 0.0, 1.0);           \n\
-}                                               \n\
-";
+layout(location = 0) in vec3 pos;
+
+uniform mat4 model;
+
+out vec4 v_color;
+
+void main()
+{
+    gl_Position = model * vec4(pos, 1.0);
+    v_color = vec4(clamp(pos, 0.0, 1.0), 1.0);
+}
+)";
+
+static const char* FRAGMENT_SHADER = R"(
+#version 330
+
+in vec4 v_color;
+
+out vec4 color;
+
+void main()
+{
+    color = v_color;
+}
+)";
 
 void createTriangle()
 {
@@ -214,9 +220,9 @@ int main()
         glUseProgram(shader);
 
         glm::mat4 model(1.0f);
-        model = glm::translate(model, glm::vec3(x_offset, 0.0f, 0.0f));
-        model = glm::rotate(model, curr_angle * TO_RADIANS, glm::vec3(0.0f, 0.0f, 1.0f));
-        model = glm::scale(model, glm::vec3(curr_size, 0.4f, 1.0f));
+        // model = glm::translate(model, glm::vec3(x_offset, 0.0f, 0.0f));
+        // model = glm::rotate(model, curr_angle * TO_RADIANS, glm::vec3(0.0f, 0.0f, 1.0f));
+        model = glm::scale(model, glm::vec3(0.4f, 0.4f, 1.0f));
         glUniformMatrix4fv(uniform_model, 1, GL_FALSE, glm::value_ptr(model));
 
         glBindVertexArray(vao);
