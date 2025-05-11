@@ -15,4 +15,5 @@ include_directories(/opt/homebrew/include)
 link_directories(/opt/homebrew/lib)
 
 add_subdirectory(app)
+add_subdirectory(src)
 
