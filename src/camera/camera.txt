@@ -1,0 +1,60 @@
+***************************************************Camera/View Space**********************************************************************
+- Camera processes the scene as seen in the "View Space".
+- View Space is the co-ordinate system with each vertex as seen from the camera.
+- Use a View Matrix to convert from World Space to View Space.
+- View Matrix requires 4 values : Camera Position, Direction, Right and Up.
+- Camera Position : Position of the camera.
+- Direction : Direction of the camera is looking in. Direction Vector actually points in opposite direction of the "intituitive" direction.
+- Right : Vector facing racing of the camera, defines x-axis. Can calculate by doing cross product of Direction and "up" vector [0,1,0].
+- Up: Upwards relative to where camera is facing. Can calculate by doing cross product of Direction and Right vectors.
+- glm::mat4 view_matrix = glm::lookAt(position , target, up)
+- position = camera position.
+- target = point for camera to look at. Defined as the camera's position wuth a direction added on to it. 
+- up = The upwards direction of the world, not the camera.
+
+
+***************************************************Using View Matrix**********************************************************************
+- Bind View Matrix to a uniform on the shader.
+- Apply it betwee projection and model matrices.
+- gl_Position = project*view*model*vec4(pos, 1.0)
+
+***************************************************Moving the Camera**********************************************************************
+- Just need to change camera position!
+- GLFW : glfwGetKy(window, GLFW_KEY_W)
+- SDL : Check for event, check if KEYDOWN event, check which key pressed.
+- Add value to camera position while key held.
+- If different cpu speeds, it will move faster on some computers.
+
+***************************************************Input : Delta Time*********************************************************************
+- Check how much time passed since last loop, apply maths based on this to keep consistent speeds.
+- delte_time = current_time - last_time
+- current_time = last_time
+- Multiply the camera's movement by delta_time.
+
+***************************************************Input : Turning************************************************************************
+- Three types of angle.
+- Pitch : looking up and down.
+- Yaw : Looking left and right.
+- Roll : Like a plane doing a barrell roll
+- Pitching needs to rotate the view up and down using axis relative to the yaw.
+- Yaw will only ever rotate around our up axis (y-axis).
+
+***************************************************Input : Turning - Pitch****************************************************************
+- Pitching axis will depend on yaw.
+- y = sin(pitch), x = cos(pitch), z = cos(pitch)
+
+***************************************************Input : Turning - Yaw******************************************************************
+- x = cos(yaw), z = sin(yaw)
+
+***************************************************Input : Turning - Pitch + Yaw**********************************************************
+- x = cos(pitch)*cos(yaw), y = sin(pitch), z = cos(pitch)*sin(yaw)
+- update camera position with new vector
+
+***************************************************Input : Turning - Implementatio *******************************************************
+- GLFW : glfwSetCursorPosCallback(window, callback);
+Store old mouse position, compare it new position. Use difference to decide pitch/yaw change.
+
+- SDL : Check for SDL_MOUSEMOTION event.
+Call SDL_GetMouseState(&x, &y);
+Then do the same as above.
+ 

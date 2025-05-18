@@ -8,10 +8,13 @@
 #include "mesh.h"
 #include "shader.h"
 #include "glwindow.h"
+#include "camera.h"
 
 std::vector<Mesh*> mesh_list;
 std::vector<Shader*> shader_list;
 GLWindow main_window;
+Camera camera;
+GLfloat last_time = 0;
 
 static const std::string VERTEX_SHADER = "Shaders/shader.vert";
 
@@ -53,17 +56,24 @@ int main()
 {
     main_window = GLWindow(800, 600);
     main_window.initialize();
+
+    camera = Camera(glm::vec3(0,0,0), glm::vec3(0,1.0f,0), -90.0f, 0.0f, 5.0f, 1.0f);
     createObjects();
     createShaders();
 
     auto projection = glm::perspective(45.0f, main_window.getBufferWidth() / main_window.getBufferHeight(), 0.1f, 100.0f);
-    GLuint uniform_model = 0, uniform_projection = 0;
+    GLuint uniform_model = 0, uniform_projection = 0, uniform_view = 0;
     
     // Loop until window closed
     while(!main_window.shouldClose())
     {
         // Get + Handle user input events
         glfwPollEvents();
+        auto current_time = glfwGetTime();
+        auto delta_time = current_time - last_time;
+        last_time = current_time;
+        camera.handleKeyPress(main_window.getKeys(), delta_time);
+        camera.handleMouseMove(main_window.getXChange(), main_window.getYChange());
 
         // Clear window
         glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
@@ -72,12 +82,14 @@ int main()
         shader_list[0]->useShader();
         uniform_model = shader_list[0]->getUniformModel();
         uniform_projection = shader_list[0]->getUniformProjection();
+        uniform_view = shader_list[0]->getUnifromView();
 
         glm::mat4 model(1.0f);
         model = glm::translate(model, glm::vec3(0.0f, 0.0f, -2.5f));
         model = glm::scale(model, glm::vec3(0.4f, 0.4f, 1.0f));
         glUniformMatrix4fv(uniform_model, 1, GL_FALSE, glm::value_ptr(model));
         glUniformMatrix4fv(uniform_projection, 1, GL_FALSE, glm::value_ptr(projection));
+        glUniformMatrix4fv(uniform_view, 1, GL_FALSE, glm::value_ptr(camera.getViewMatrix()));
 
         mesh_list[0]->renderMesh();
 

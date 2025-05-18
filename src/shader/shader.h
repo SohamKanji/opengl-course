@@ -16,6 +16,8 @@ class Shader {
 
     GLuint getUniformProjection() const { return m_uniform_projection; }
 
+    GLuint getUnifromView() const {return m_uniform_view;}
+
     void clearShader();
 
     void useShader() const
@@ -34,4 +36,5 @@ class Shader {
     GLuint m_shader_id;
     GLuint m_uniform_model;
     GLuint m_uniform_projection;
+    GLuint m_uniform_view;
 };
