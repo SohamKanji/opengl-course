@@ -71,6 +71,8 @@ void Shader::compileShader(const std::string& vertex_code, const std::string& fr
     m_uniform_model = glGetUniformLocation(m_shader_id, "model");
     m_uniform_projection = glGetUniformLocation(m_shader_id, "projection");
     m_uniform_view = glGetUniformLocation(m_shader_id, "view");
+    m_uniform_color = glGetUniformLocation(m_shader_id, "directional_light.color");
+    m_ambient_intensity = glGetUniformLocation(m_shader_id, "directional_light.ambient_intensity");
 }
 
 Shader::~Shader()

@@ -18,6 +18,10 @@ class Shader {
 
     GLuint getUnifromView() const {return m_uniform_view;}
 
+    GLuint getUniformColor() const {return m_uniform_color;}
+
+    GLuint getUniformAmbientIntensity() const {return m_ambient_intensity;}
+
     void clearShader();
 
     void useShader() const
@@ -37,4 +41,6 @@ class Shader {
     GLuint m_uniform_model;
     GLuint m_uniform_projection;
     GLuint m_uniform_view;
+    GLuint m_uniform_color;
+    GLuint m_ambient_intensity;
 };

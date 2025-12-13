@@ -11,6 +11,7 @@
 #include "glwindow.h"
 #include "camera.h"
 #include "texture.h"
+#include "light.h"
 
 std::vector<Mesh*> mesh_list;
 std::vector<Shader*> shader_list;
@@ -18,6 +19,7 @@ GLWindow main_window;
 Texture brick_texture;
 Texture dirt_texture;
 Camera camera;
+Light light(1.0f, 0.0f, 0.0f, 0.2f);
 GLfloat last_time = 0;
 
 static const std::string VERTEX_SHADER = "Shaders/shader.vert";
@@ -66,7 +68,7 @@ int main()
     createShaders();
 
     auto projection = glm::perspective(45.0f, main_window.getBufferWidth() / main_window.getBufferHeight(), 0.1f, 100.0f);
-    GLuint uniform_model = 0, uniform_projection = 0, uniform_view = 0;
+    GLuint uniform_model = 0, uniform_projection = 0, uniform_view = 0, uniform_color = 0, uniform_ambient_intensity = 0;
 
     brick_texture = Texture("Textures/brick.png");
     brick_texture.loadTexture();
@@ -88,9 +90,12 @@ int main()
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
         shader_list[0]->useShader();
+        light.useLight(shader_list[0]->getUniformColor(), shader_list[0]->getUniformAmbientIntensity());
         uniform_model = shader_list[0]->getUniformModel();
         uniform_projection = shader_list[0]->getUniformProjection();
         uniform_view = shader_list[0]->getUnifromView();
+        uniform_color = shader_list[0]->getUniformColor();
+        uniform_ambient_intensity = shader_list[0]->getUniformAmbientIntensity();
 
         glm::mat4 model(1.0f);
         model = glm::translate(model, glm::vec3(0.0f, 0.0f, -2.5f));
@@ -98,6 +103,7 @@ int main()
         glUniformMatrix4fv(uniform_model, 1, GL_FALSE, glm::value_ptr(model));
         glUniformMatrix4fv(uniform_projection, 1, GL_FALSE, glm::value_ptr(projection));
         glUniformMatrix4fv(uniform_view, 1, GL_FALSE, glm::value_ptr(camera.getViewMatrix()));
+        light.useLight(uniform_color, uniform_ambient_intensity);
 
         brick_texture.useTexture();
         mesh_list[0]->renderMesh();
