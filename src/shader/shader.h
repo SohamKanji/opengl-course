@@ -22,6 +22,10 @@ class Shader {
 
     GLuint getUniformAmbientIntensity() const {return m_ambient_intensity;}
 
+    GLuint getUniformDirection() const {return m_direction;}
+
+    GLuint getUniformDiffuseIntensity() const {return m_diffuse_intensity;}
+
     void clearShader();
 
     void useShader() const
@@ -43,4 +47,6 @@ class Shader {
     GLuint m_uniform_view;
     GLuint m_uniform_color;
     GLuint m_ambient_intensity;
+    GLuint m_direction;
+    GLuint m_diffuse_intensity;
 };
