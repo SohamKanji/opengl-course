@@ -1,3 +1,4 @@
+#define STB_IMAGE_IMPLEMENTATION
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
 #include <glm/glm.hpp>
@@ -9,10 +10,13 @@
 #include "shader.h"
 #include "glwindow.h"
 #include "camera.h"
+#include "texture.h"
 
 std::vector<Mesh*> mesh_list;
 std::vector<Shader*> shader_list;
 GLWindow main_window;
+Texture brick_texture;
+Texture dirt_texture;
 Camera camera;
 GLfloat last_time = 0;
 
@@ -30,18 +34,18 @@ void createObjects()
     };
 
     GLfloat vertices[] = {
-        -1.0f, -1.0f, 0.0f,
-        0.0f, -1.0f, 1.0f,
-        1.0f, -1.0f, 0.0f,
-        0.0f, 1.0f, 0.0f
+        -1.0f, -1.0f, 0.0f, 0.0f, 0.0f,
+        0.0f, -1.0f, 1.0f,  0.5f, 0.0f,
+        1.0f, -1.0f, 0.0f,  1.0f, 0.0f,
+        0.0f, 1.0f, 0.0f,   0.5f, 1.0f
     };
 
     auto obj1 = new Mesh();
-    obj1->createMesh(vertices, indices, 12, 12);
+    obj1->createMesh(vertices, indices, 20, 12);
     mesh_list.push_back(obj1);
 
     auto obj2 = new Mesh();
-    obj2->createMesh(vertices, indices, 12, 12);
+    obj2->createMesh(vertices, indices, 20, 12);
     mesh_list.push_back(obj2);
 }
 
@@ -63,7 +67,11 @@ int main()
 
     auto projection = glm::perspective(45.0f, main_window.getBufferWidth() / main_window.getBufferHeight(), 0.1f, 100.0f);
     GLuint uniform_model = 0, uniform_projection = 0, uniform_view = 0;
-    
+
+    brick_texture = Texture("Textures/brick.png");
+    brick_texture.loadTexture();
+    dirt_texture = Texture("Textures/dirt.png");
+    dirt_texture.loadTexture();
     // Loop until window closed
     while(!main_window.shouldClose())
     {
@@ -91,12 +99,14 @@ int main()
         glUniformMatrix4fv(uniform_projection, 1, GL_FALSE, glm::value_ptr(projection));
         glUniformMatrix4fv(uniform_view, 1, GL_FALSE, glm::value_ptr(camera.getViewMatrix()));
 
+        brick_texture.useTexture();
         mesh_list[0]->renderMesh();
 
         model = glm::mat4(5.0f);
         model = glm::translate(model, glm::vec3(0.0f, 1.0f, -2.5f));
         model = glm::scale(model, glm::vec3(0.4f, 0.4f, 1.0f));
         glUniformMatrix4fv(uniform_model, 1, GL_FALSE, glm::value_ptr(model));
+        dirt_texture.useTexture();
         mesh_list[1]->renderMesh();
 
         glUseProgram(0);
