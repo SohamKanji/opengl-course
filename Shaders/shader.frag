@@ -36,10 +36,10 @@ void main()
     if(diffuse_factor > 0.0f) {
         vec3 frag_to_eye = normalize(eye_position - frag_pos);
         vec3 reflected_vertex = normalize(reflect(directional_light.direction, normalize(out_normal)));
-        float specular_factor = dot(reflected_vertex, frag_to_eye);
+        float specular_factor = dot(frag_to_eye, reflected_vertex);
         if (specular_factor > 0.0f) {
             specular_factor = pow(specular_factor, material.shininess);
-            specular_color = vec4(directional_light.color, 1.0f) * specular_factor * material.specular_intensity;
+            specular_color = vec4(directional_light.color * material.specular_intensity * specular_factor, 1.0f);
         }
     }
 

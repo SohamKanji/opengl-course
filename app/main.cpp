@@ -20,7 +20,7 @@ std::vector<Shader*> shader_list;
 GLWindow main_window;
 Texture brick_texture;
 Texture dirt_texture;
-Material shiny_material(4.0f, 256.0f);
+Material shiny_material(4.0f, 32.0f);
 Material dull_material(0.3f, 4.0f);
 Camera camera;
 Light light(1.0f, 0.0f, 0.0f, 0.2f, 2.0f, -1.0f, -2.0f, 1.0f);
@@ -63,9 +63,9 @@ void createObjects()
     };
 
     GLfloat vertices[] = {
-        -1.0f, -1.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+        -1.0f, -1.0f, -0.6f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
         0.0f, -1.0f, 1.0f,  0.5f, 0.0f, 0.0f, 0.0f, 0.0f,
-        1.0f, -1.0f, 0.0f,  1.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+        1.0f, -1.0f, -0.6f,  1.0f, 0.0f, 0.0f, 0.0f, 0.0f,
         0.0f, 1.0f, 0.0f,   0.5f, 1.0f, 0.0f, 0.0f, 0.0f
     };
     createAverageNormal(indices, vertices, 32, 12, 8, 5);
@@ -87,7 +87,7 @@ void createShaders()
 
 int main() 
 {
-    main_window = GLWindow(800, 600);
+    main_window = GLWindow(1366, 768);
     main_window.initialize();
 
     camera = Camera(glm::vec3(0,0,0), glm::vec3(0,1.0f,0), -90.0f, 0.0f, 5.0f, 1.0f);
@@ -136,7 +136,7 @@ int main()
 
         glm::mat4 model(1.0f);
         model = glm::translate(model, glm::vec3(0.0f, 0.0f, -2.5f));
-        model = glm::scale(model, glm::vec3(0.4f, 0.4f, 1.0f));
+        // model = glm::scale(model, glm::vec3(0.4f, 0.4f, 1.0f));
         glUniformMatrix4fv(uniform_model, 1, GL_FALSE, glm::value_ptr(model));
         
         light.useLight(uniform_color, uniform_ambient_intensity, uniform_direction, uniform_diffuse_intensity);
@@ -146,8 +146,8 @@ int main()
         mesh_list[0]->renderMesh();
 
         model = glm::mat4(5.0f);
-        model = glm::translate(model, glm::vec3(0.0f, 1.0f, -2.5f));
-        model = glm::scale(model, glm::vec3(0.4f, 0.4f, 1.0f));
+        model = glm::translate(model, glm::vec3(0.0f, 4.0f, -2.5f));
+        // model = glm::scale(model, glm::vec3(0.4f, 0.4f, 1.0f));
         glUniformMatrix4fv(uniform_model, 1, GL_FALSE, glm::value_ptr(model));
         dirt_texture.useTexture();
         dull_material.useMaterial(uniform_shininess, uniform_specular_intensity);
