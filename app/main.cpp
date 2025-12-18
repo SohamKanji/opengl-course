@@ -13,12 +13,15 @@
 #include "texture.h"
 #include "light.h"
 #include <iostream>
+#include "material.h"
 
 std::vector<Mesh*> mesh_list;
 std::vector<Shader*> shader_list;
 GLWindow main_window;
 Texture brick_texture;
 Texture dirt_texture;
+Material shiny_material(4.0f, 256.0f);
+Material dull_material(0.3f, 4.0f);
 Camera camera;
 Light light(1.0f, 0.0f, 0.0f, 0.2f, 2.0f, -1.0f, -2.0f, 1.0f);
 GLfloat last_time = 0;
@@ -93,7 +96,7 @@ int main()
 
     auto projection = glm::perspective(45.0f, main_window.getBufferWidth() / main_window.getBufferHeight(), 0.1f, 100.0f);
     GLuint uniform_model = 0, uniform_projection = 0, uniform_view = 0, uniform_color = 0, uniform_ambient_intensity = 0,
-    uniform_direction = 0, uniform_diffuse_intensity = 0;
+    uniform_direction = 0, uniform_diffuse_intensity = 0, uniform_eye_position = 0, uniform_specular_intensity = 0, uniform_shininess = 0;
 
     brick_texture = Texture("Textures/brick.png");
     brick_texture.loadTexture();
@@ -123,16 +126,23 @@ int main()
         uniform_ambient_intensity = shader_list[0]->getUniformAmbientIntensity();
         uniform_direction = shader_list[0]->getUniformDirection();
         uniform_diffuse_intensity = shader_list[0]->getUniformDiffuseIntensity();
+        uniform_eye_position = shader_list[0]->getUniformEyePosition();
+        uniform_specular_intensity = shader_list[0]->getUniformSpecularIntensity();
+        uniform_shininess = shader_list[0]->getUniformShininess();
+
+        glUniformMatrix4fv(uniform_projection, 1, GL_FALSE, glm::value_ptr(projection));
+        glUniformMatrix4fv(uniform_view, 1, GL_FALSE, glm::value_ptr(camera.getViewMatrix()));
+        glUniform3f(uniform_eye_position, camera.getCameraPosition().x, camera.getCameraPosition().y, camera.getCameraPosition().z);
 
         glm::mat4 model(1.0f);
         model = glm::translate(model, glm::vec3(0.0f, 0.0f, -2.5f));
         model = glm::scale(model, glm::vec3(0.4f, 0.4f, 1.0f));
         glUniformMatrix4fv(uniform_model, 1, GL_FALSE, glm::value_ptr(model));
-        glUniformMatrix4fv(uniform_projection, 1, GL_FALSE, glm::value_ptr(projection));
-        glUniformMatrix4fv(uniform_view, 1, GL_FALSE, glm::value_ptr(camera.getViewMatrix()));
+        
         light.useLight(uniform_color, uniform_ambient_intensity, uniform_direction, uniform_diffuse_intensity);
 
         brick_texture.useTexture();
+        shiny_material.useMaterial(uniform_shininess, uniform_specular_intensity);
         mesh_list[0]->renderMesh();
 
         model = glm::mat4(5.0f);
@@ -140,6 +150,7 @@ int main()
         model = glm::scale(model, glm::vec3(0.4f, 0.4f, 1.0f));
         glUniformMatrix4fv(uniform_model, 1, GL_FALSE, glm::value_ptr(model));
         dirt_texture.useTexture();
+        dull_material.useMaterial(uniform_shininess, uniform_specular_intensity);
         mesh_list[1]->renderMesh();
 
         glUseProgram(0);

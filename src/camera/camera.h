@@ -19,6 +19,8 @@ public:
 
     glm::mat4 getViewMatrix() const;
 
+    glm::vec3 getCameraPosition() const { return m_position; }
+
 private:
 
     void update();

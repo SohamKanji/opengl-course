@@ -26,6 +26,12 @@ class Shader {
 
     GLuint getUniformDiffuseIntensity() const {return m_diffuse_intensity;}
 
+    GLuint getUniformSpecularIntensity() const {return m_uniform_specular_intensity;}
+
+    GLuint getUniformShininess() const {return m_uniform_shininess;}
+
+    GLuint getUniformEyePosition() const {return m_eye_position;}
+
     void clearShader();
 
     void useShader() const
@@ -49,4 +55,7 @@ class Shader {
     GLuint m_ambient_intensity;
     GLuint m_direction;
     GLuint m_diffuse_intensity;
+    GLuint m_eye_position;
+    GLuint m_uniform_specular_intensity;
+    GLuint m_uniform_shininess;
 };

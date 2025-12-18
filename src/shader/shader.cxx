@@ -75,6 +75,9 @@ void Shader::compileShader(const std::string& vertex_code, const std::string& fr
     m_ambient_intensity = glGetUniformLocation(m_shader_id, "directional_light.ambient_intensity");
     m_direction = glGetUniformLocation(m_shader_id, "directional_light.direction");
     m_diffuse_intensity = glGetUniformLocation(m_shader_id, "directional_light.diffuse_intensity");
+    m_eye_position = glGetUniformLocation(m_shader_id, "eye_position");
+    m_uniform_specular_intensity = glGetUniformLocation(m_shader_id, "material.specular_intensity");
+    m_uniform_shininess = glGetUniformLocation(m_shader_id, "material.shininess");
 }
 
 Shader::~Shader()
