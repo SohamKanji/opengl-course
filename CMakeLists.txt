@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.16)
 project(OpenGLProject)
 
-set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD 20)
 
 # Find GLFW and GLEW
 find_package(glfw3 REQUIRED)
