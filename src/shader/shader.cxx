@@ -2,6 +2,7 @@
 #include <fstream>
 #include "directional_light.h"
 #include "point_light.h"
+#include "spot_light.h"
 
 Shader::Shader() {
     m_shader_id = 0;
@@ -91,6 +92,20 @@ void Shader::compileShader(const std::string& vertex_code, const std::string& fr
         m_uniform_point_lights[i].linear = glGetUniformLocation(m_shader_id, std::format("point_lights[{}].linear", i).c_str());
         m_uniform_point_lights[i].constant = glGetUniformLocation(m_shader_id, std::format("point_lights[{}].constant", i).c_str());
     }
+
+    m_uniform_spot_light_count = glGetUniformLocation(m_shader_id, "spot_light_count");
+
+    for(int i=0; i<MAX_SPOT_LIGHT_COUNT; i++) {
+        m_uniform_spot_lights[i].diffuse_intensity = glGetUniformLocation(m_shader_id, std::format("spot_lights[{}].base.base.diffuse_intensity", i).c_str());
+        m_uniform_spot_lights[i].ambient_intensity = glGetUniformLocation(m_shader_id, std::format("spot_lights[{}].base.base.ambient_intensity", i).c_str());
+        m_uniform_spot_lights[i].color = glGetUniformLocation(m_shader_id, std::format("spot_lights[{}].base.base.color", i).c_str());
+        m_uniform_spot_lights[i].position = glGetUniformLocation(m_shader_id, std::format("spot_lights[{}].base.position", i).c_str());
+        m_uniform_spot_lights[i].quadratic = glGetUniformLocation(m_shader_id, std::format("spot_lights[{}].base.quadratic", i).c_str());
+        m_uniform_spot_lights[i].linear = glGetUniformLocation(m_shader_id, std::format("spot_lights[{}].base.linear", i).c_str());
+        m_uniform_spot_lights[i].constant = glGetUniformLocation(m_shader_id, std::format("spot_lights[{}].base.constant", i).c_str());
+        m_uniform_spot_lights[i].direction = glGetUniformLocation(m_shader_id, std::format("spot_lights[{}].direction", i).c_str());
+        m_uniform_spot_lights[i].cutoff = glGetUniformLocation(m_shader_id, std::format("spot_lights[{}].cutoff", i).c_str());
+    }
 }
 
 Shader::~Shader()
@@ -145,5 +160,14 @@ void Shader::usePointLights(std::vector<PointLight*> point_lights)
     glUniform1i(m_uniform_point_light_count, total_light);
     for(int i=0; i<total_light; i++) {
         point_lights[i]->useLight(m_uniform_point_lights[i].color, m_uniform_point_lights[i].ambient_intensity, m_uniform_point_lights[i].diffuse_intensity, m_uniform_point_lights[i].position, m_uniform_point_lights[i].quadratic, m_uniform_point_lights[i].linear, m_uniform_point_lights[i].constant);
+    }
+}
+
+void Shader::useSpotLights(std::vector<SpotLight*> spot_lights)
+{
+    int total_light = std::min((int)spot_lights.size(), MAX_SPOT_LIGHT_COUNT);
+    glUniform1i(m_uniform_spot_light_count, total_light);
+    for(int i=0; i<total_light; i++) {
+        spot_lights[i]->useLight(m_uniform_spot_lights[i].color, m_uniform_spot_lights[i].ambient_intensity, m_uniform_spot_lights[i].diffuse_intensity, m_uniform_spot_lights[i].position, m_uniform_spot_lights[i].quadratic, m_uniform_spot_lights[i].linear, m_uniform_spot_lights[i].constant, m_uniform_spot_lights[i].cutoff, m_uniform_spot_lights[i].direction);
     }
 }

@@ -21,6 +21,8 @@ public:
 
     glm::vec3 getCameraPosition() const { return m_position; }
 
+    glm::vec3 getCameraDirection() const;
+
 private:
 
     void update();

@@ -15,6 +15,7 @@
 #include <iostream>
 #include "material.h"
 #include "point_light.h"
+#include "spot_light.h"
 
 std::vector<Mesh*> mesh_list;
 std::vector<Shader*> shader_list;
@@ -25,7 +26,7 @@ Texture plain_texture;
 Material shiny_material(4.0f, 32.0f);
 Material dull_material(0.3f, 4.0f);
 Camera camera;
-DirectionalLight light(1.0f, 1.0f, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f, -1.0f);
+DirectionalLight light(1.0f, 1.0f, 1.0f, 0.0f, 0.1f, 0.0f, 0.0f, -1.0f);
 GLfloat last_time = 0;
 
 static const std::string VERTEX_SHADER = "Shaders/shader.vert";
@@ -121,9 +122,13 @@ int main()
     dirt_texture.loadTexture();
     plain_texture = Texture("Textures/plain.png");
     plain_texture.loadTexture();
-    std::vector<PointLight*> point_lights(2);
-    point_lights[0] = new PointLight(0.0f, 1.0f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.3f, 0.2f, 0.1f);
-    point_lights[1] = new PointLight(0.0f, 0.0f, 1.0f, 0.0f, 1.0f, -4.0f, 2.0f, 0.0f, 0.3f, 0.1f, 0.1f);
+    std::vector<PointLight*> point_lights(0);
+    // point_lights[0] = new PointLight(0.0f, 1.0f, 0.0f, 0.0f, 0.1f, 0.0f, 0.0f, 0.0f, 0.3f, 0.2f, 0.1f);
+    // point_lights[1] = new PointLight(0.0f, 0.0f, 1.0f, 0.0f, 1.0f, -4.0f, 2.0f, 0.0f, 0.3f, 0.1f, 0.1f);
+
+    std::vector<SpotLight*> spot_lights(2);
+    spot_lights[0] = new SpotLight(1.0f, 1.0f, 1.0f, 0.0f, 2.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f, 20.0f, 0.0f, -1.0f, 0.0f);
+    spot_lights[1] = new SpotLight(1.0f, 1.0f, 1.0f, 0.0f, 1.0f, -0.0f, -1.5f, 0.0f, 1.0f, 0.0f, 0.0f, 20.0f, -100.0f, -1.0f, 0.0f);
     // Loop until window closed
     while(!main_window.shouldClose())
     {
@@ -155,9 +160,14 @@ int main()
         model = glm::translate(model, glm::vec3(0.0f, 0.0f, -2.5f));
         // model = glm::scale(model, glm::vec3(0.4f, 0.4f, 1.0f));
         glUniformMatrix4fv(uniform_model, 1, GL_FALSE, glm::value_ptr(model));
+
+        glm::vec3 lower_light = camera.getCameraPosition();
+        lower_light -= 0.3f;
+        spot_lights[0]->useFlash(lower_light, camera.getCameraDirection());
         
         shader_list[0]->useDirectionalLight(&light);
         shader_list[0]->usePointLights(point_lights);
+        shader_list[0]->useSpotLights(spot_lights);
 
         brick_texture.useTexture();
         shiny_material.useMaterial(uniform_shininess, uniform_specular_intensity);

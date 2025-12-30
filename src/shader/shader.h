@@ -5,8 +5,10 @@
 
 class DirectionalLight;
 class PointLight;
+class SpotLight;
 
 const static int MAX_POINT_LIGHT_COUNT = 3;
+const static int MAX_SPOT_LIGHT_COUNT = 3;
 
 class Shader {
     public:
@@ -40,6 +42,8 @@ class Shader {
     void useDirectionalLight(DirectionalLight* directional_light);
 
     void usePointLights(std::vector<PointLight*> point_lights);
+
+    void useSpotLights(std::vector<SpotLight*> spot_lights);
 
     private:
 
@@ -77,4 +81,19 @@ class Shader {
     } m_uniform_point_lights[MAX_POINT_LIGHT_COUNT];
 
     GLuint m_uniform_point_light_count;
+
+    struct 
+    {
+        GLuint diffuse_intensity;
+        GLuint ambient_intensity;
+        GLuint color;
+        GLuint position;
+        GLuint quadratic;
+        GLuint linear;
+        GLuint constant;
+        GLuint cutoff;
+        GLuint direction;
+    } m_uniform_spot_lights[MAX_SPOT_LIGHT_COUNT];
+
+    GLuint m_uniform_spot_light_count;
 };
