@@ -1,3 +1,3 @@
 add_executable(OpenGLProject main.cpp)
 
-target_link_libraries(OpenGLProject glfw OpenGL::GL GLEW glm Mesh Shader GLWindow Camera Texture Light Material)
+target_link_libraries(OpenGLProject glfw OpenGL::GL GLEW glm Mesh Shader GLWindow Camera Texture Light Material Model)

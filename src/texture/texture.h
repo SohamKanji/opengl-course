@@ -13,6 +13,7 @@ public:
 
     ~Texture();
 
+    bool loadTextureRGB();
     void loadTexture();
     void useTexture();
     void clearTexture();

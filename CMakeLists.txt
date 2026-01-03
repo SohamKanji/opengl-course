@@ -14,6 +14,16 @@ include_directories(/opt/homebrew/include)
 # Link directories
 link_directories(/opt/homebrew/lib)
 
+include(FetchContent)
+
+FetchContent_Declare(
+    assimp
+    GIT_REPOSITORY https://github.com/assimp/assimp.git
+    GIT_TAG v6.0.2
+    GIT_SHALLOW TRUE
+)
+FetchContent_MakeAvailable(assimp)
+
 add_subdirectory(app)
 add_subdirectory(src)
 
